@@ -1,9 +1,17 @@
 {
   "name": "zoxide",
   "repo": "ajeetdsouza/zoxide",
-  "asset_pattern": "zoxide-{version}-x86_64-unknown-linux-musl.tar.gz",
   "tag_prefix": "v",
   "format": "tarball",
-  "extract_path": "zoxide",
-  "output_binaries": ["zoxide"]
+  "output_binaries": ["zoxide"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "zoxide-{version}-x86_64-unknown-linux-musl.tar.gz",
+      "extract_path": "zoxide"
+    },
+    "arm64": {
+      "asset_pattern": "zoxide-{version}-aarch64-unknown-linux-musl.tar.gz",
+      "extract_path": "zoxide"
+    }
+  }
 }

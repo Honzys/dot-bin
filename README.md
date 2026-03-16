@@ -6,7 +6,8 @@ Portable, version-controlled CLI toolchain. All binaries tracked via git-lfs wit
 
 ```bash
 git clone <repo-url>
-export PATH="$HOME/projects/dot-bin/bin:$PATH"
+ARCH=$(uname -m | sed 's/aarch64/arm64/')
+export PATH="$HOME/projects/dot-bin/bin/${ARCH}:$PATH"
 ```
 
 ## Updating
@@ -39,9 +40,11 @@ export PATH="$HOME/projects/dot-bin/bin:$PATH"
 ## Structure
 
 ```
-packages/   — per-package JSON definitions
-scripts/    — update driver and shared library
-bin/        — all binaries (git-lfs tracked)
+packages/        — per-package JSON definitions
+scripts/         — update driver and shared library
+bin/x86_64/      — x86_64 binaries (git-lfs tracked)
+bin/arm64/       — arm64 binaries (git-lfs tracked)
+versions.json    — current versions (auto-generated)
 ```
 
 ## CI

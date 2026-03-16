@@ -1,9 +1,21 @@
 {
   "name": "lazygit",
   "repo": "jesseduffield/lazygit",
-  "asset_pattern": "lazygit_{version}_linux_x86_64.tar.gz",
   "tag_prefix": "v",
   "format": "tarball",
-  "extract_path": "lazygit",
-  "output_binaries": ["lazygit"]
+  "output_binaries": ["lazygit"],
+  "checksum": {
+    "asset": "checksums.txt",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "lazygit_{version}_linux_x86_64.tar.gz",
+      "extract_path": "lazygit"
+    },
+    "arm64": {
+      "asset_pattern": "lazygit_{version}_linux_arm64.tar.gz",
+      "extract_path": "lazygit"
+    }
+  }
 }

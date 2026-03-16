@@ -1,9 +1,22 @@
 {
   "name": "uv",
   "repo": "astral-sh/uv",
-  "asset_pattern": "uv-x86_64-unknown-linux-gnu.tar.gz",
   "tag_prefix": "",
   "format": "tarball",
-  "extract_path": ["uv-x86_64-unknown-linux-gnu/uv", "uv-x86_64-unknown-linux-gnu/uvx"],
-  "output_binaries": ["uv", "uvx"]
+  "output_binaries": ["uv", "uvx"],
+  "checksum": {
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "uv-x86_64-unknown-linux-gnu.tar.gz",
+      "extract_path": ["uv-x86_64-unknown-linux-gnu/uv", "uv-x86_64-unknown-linux-gnu/uvx"],
+      "checksum_asset": "uv-x86_64-unknown-linux-gnu.tar.gz.sha256"
+    },
+    "arm64": {
+      "asset_pattern": "uv-aarch64-unknown-linux-gnu.tar.gz",
+      "extract_path": ["uv-aarch64-unknown-linux-gnu/uv", "uv-aarch64-unknown-linux-gnu/uvx"],
+      "checksum_asset": "uv-aarch64-unknown-linux-gnu.tar.gz.sha256"
+    }
+  }
 }

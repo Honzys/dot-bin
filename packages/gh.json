@@ -1,9 +1,21 @@
 {
   "name": "gh",
   "repo": "cli/cli",
-  "asset_pattern": "gh_{version}_linux_amd64.tar.gz",
   "tag_prefix": "v",
   "format": "tarball",
-  "extract_path": "*/bin/gh",
-  "output_binaries": ["gh"]
+  "output_binaries": ["gh"],
+  "checksum": {
+    "asset": "gh_{version}_checksums.txt",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "gh_{version}_linux_amd64.tar.gz",
+      "extract_path": "*/bin/gh"
+    },
+    "arm64": {
+      "asset_pattern": "gh_{version}_linux_arm64.tar.gz",
+      "extract_path": "*/bin/gh"
+    }
+  }
 }

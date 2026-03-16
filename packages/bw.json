@@ -1,9 +1,17 @@
 {
   "name": "bw",
   "repo": "bitwarden/clients",
-  "asset_pattern": "bw-linux-{version}.zip",
   "tag_prefix": "cli-v",
   "format": "zip",
-  "extract_path": "bw",
-  "output_binaries": ["bw"]
+  "output_binaries": ["bw"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "bw-linux-{version}.zip",
+      "extract_path": "bw"
+    },
+    "arm64": {
+      "asset_pattern": "bw-linux-arm64-{version}.zip",
+      "extract_path": "bw"
+    }
+  }
 }

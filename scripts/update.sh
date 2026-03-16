@@ -50,7 +50,7 @@ for name in "${packages[@]}"; do
         continue
     fi
 
-    echo "  ${name}: ${current:-<none>} -> ${version}"
+    echo "  ${name}: ${current:-<none>} -> ${version} (archs: ${ARCHITECTURES[*]})"
     if download_and_install "$pkg_file" "$tag"; then
         echo "  ${name}: installed ${version}"
         updated=$((updated + 1))

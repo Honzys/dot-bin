@@ -1,9 +1,17 @@
 {
   "name": "nvim",
   "repo": "neovim/neovim",
-  "asset_pattern": "nvim-linux-x86_64.tar.gz",
   "tag_prefix": "v",
   "format": "tarball",
-  "extract_path": "nvim-linux-x86_64/bin/nvim",
-  "output_binaries": ["nvim"]
+  "output_binaries": ["nvim"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "nvim-linux-x86_64.tar.gz",
+      "extract_path": "nvim-linux-x86_64/bin/nvim"
+    },
+    "arm64": {
+      "asset_pattern": "nvim-linux-arm64.tar.gz",
+      "extract_path": "nvim-linux-arm64/bin/nvim"
+    }
+  }
 }
