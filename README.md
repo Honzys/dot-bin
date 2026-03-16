@@ -18,6 +18,20 @@ DOT_BIN_INSTALL_DIR=/opt/bin bash install.sh
 
 Re-run the same command to update.
 
+## Release Channels
+
+Each package can be configured with a release channel in its JSON definition:
+
+- **stable** (default): only considers non-pre-release versions
+- **unstable**: includes pre-releases when checking for the latest version
+
+Override the channel at runtime with the `CHANNEL` environment variable:
+
+```bash
+CHANNEL=unstable ./scripts/update.sh nvim   # get pre-release nvim
+CHANNEL=stable ./scripts/update.sh codex    # get stable codex even though JSON says unstable
+```
+
 ## Packages
 
 | Package | Source | Description |

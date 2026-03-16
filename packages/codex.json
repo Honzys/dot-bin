@@ -2,7 +2,7 @@
   "name": "codex",
   "repo": "openai/codex",
   "tag_prefix": "rust-v",
-  "pre_release": true,
+  "channel": "stable",
   "format": "tarball",
   "output_binaries": ["codex"],
   "architectures": {
