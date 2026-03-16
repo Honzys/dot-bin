@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-packages:
+    name: Validate package downloads
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y jq unzip
+
+      - name: Detect changed packages
+        id: changed
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            changed=$(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }}...HEAD -- 'packages/*.json' \
+              | xargs -I{} basename {} .json \
+              | tr '\n' ' ')
+          fi
+
+          if [[ -z "${changed:-}" ]]; then
+            echo "packages=" >> "$GITHUB_OUTPUT"
+            echo "No package changes detected, will validate all"
+          else
+            echo "packages=${changed}" >> "$GITHUB_OUTPUT"
+            echo "Changed packages: ${changed}"
+          fi
+
+      - name: Download and verify packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOT_BIN_DIR: ${{ runner.temp }}/bin
+        run: |
+          changed="${{ steps.changed.outputs.packages }}"
+          if [[ -n "$changed" ]]; then
+            ./scripts/update.sh $changed
+          else
+            ./scripts/update.sh
+          fi
+
+      - name: Verify binaries
+        env:
+          DOT_BIN_DIR: ${{ runner.temp }}/bin
+        run: |
+          failed=0
+          for arch in x86_64 arm64; do
+            dir="${DOT_BIN_DIR}/${arch}"
+            if [[ ! -d "$dir" ]]; then
+              continue
+            fi
+            for bin in "$dir"/*; do
+              name=$(basename "$bin")
+              if ! file "$bin" | grep -q "ELF 64-bit"; then
+                echo "FAIL: ${arch}/${name} is not a valid ELF binary"
+                failed=1
+              else
+                echo "OK: ${arch}/${name}"
+              fi
+            done
+          done
+          if [[ "$failed" -ne 0 ]]; then
+            exit 1
+          fi
+
+      - name: Validate versions.json
+        run: |
+          jq empty versions.json
+          echo "versions.json is valid JSON"
+          count=$(jq 'length' versions.json)
+          echo "Contains ${count} package version(s)"

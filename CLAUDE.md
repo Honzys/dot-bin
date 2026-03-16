@@ -16,6 +16,9 @@ Manages portable CLI tool binaries with automated updates from upstream GitHub/G
 # Update to a custom output directory
 DOT_BIN_DIR=/tmp/staging/bin ./scripts/update.sh
 
+# Override release channel at runtime (stable or unstable)
+CHANNEL=unstable ./scripts/update.sh nvim
+
 # Verify a binary after install
 file bin/x86_64/<name>    # should show "ELF 64-bit LSB ... x86-64"
 file bin/arm64/<name>     # should show "ELF 64-bit LSB ... ARM aarch64"
@@ -38,7 +41,7 @@ Each package is defined in `packages/<name>.json`. Fields:
 | `source` | string | no | `"github"` (default) or `"gitlab"` |
 | `gitlab_project` | string | no | URL-encoded GitLab project path (required when `source` is `"gitlab"`) |
 | `tag_prefix` | string | no | Prefix stripped from git tag to get version (e.g. `"v"`, `"cli-v"`, `"jq-"`, `""`) |
-| `pre_release` | bool | no | Set `true` to include pre-release tags (default: false) |
+| `channel` | string | no | `"stable"` (default) or `"unstable"` — stable uses latest non-pre-release; unstable includes pre-releases |
 | `format` | string | yes | `"tarball"`, `"zip"`, or `"binary"` |
 | `output_binaries` | string[] | yes | Binary names placed in `bin/{arch}/` |
 | `checksum.asset` | string | no | Checksum filename in the release (supports `{version}` placeholder) |
@@ -144,7 +147,7 @@ GitLab source (`glab`):
 - `get_current_version(name)` -- reads version from `versions.json`
 - `set_version(name, version)` -- writes version to `versions.json`
 - `strip_prefix(tag, prefix)` -- removes tag prefix to get clean version
-- `get_latest_tag(pkg_file)` -- queries GitHub API (`gh api`) or GitLab API for latest release tag; handles pre-release filtering
+- `get_latest_tag(pkg_file)` -- queries GitHub API (`gh api`) or GitLab API for latest release tag; respects `channel` setting (`stable`/`unstable`) and `CHANNEL` env var override
 - `download_asset(pkg_file, tag, dest_dir, arch)` -- downloads the per-arch release asset via `gh release download` (GitHub) or `curl` (GitLab)
 - `download_checksum_file(pkg_file, tag, dest_dir, arch)` -- downloads checksum file, respects arch-specific overrides
 - `verify_checksum(pkg_file, asset_name, asset_path, tag, arch)` -- validates SHA256/512 against downloaded checksum file

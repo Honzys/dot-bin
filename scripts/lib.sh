@@ -29,18 +29,28 @@ strip_prefix() {
 
 get_latest_tag() {
     local pkg_file="$1"
-    local source tag_prefix pre_release repo gitlab_project tag
+    local source tag_prefix channel repo gitlab_project tag
 
     source=$(jq -r '.source // "github"' "$pkg_file")
     tag_prefix=$(jq -r '.tag_prefix // ""' "$pkg_file")
-    pre_release=$(jq -r '.pre_release // false' "$pkg_file")
+    channel=$(jq -r '.channel // "stable"' "$pkg_file")
+
+    # Allow CHANNEL env var to override per-package setting
+    channel="${CHANNEL:-$channel}"
 
     if [[ "$source" == "gitlab" ]]; then
         gitlab_project=$(jq -r '.gitlab_project' "$pkg_file")
-        tag=$(curl -sS "https://gitlab.com/api/v4/projects/${gitlab_project}/releases" \
-            | jq -r --arg prefix "$tag_prefix" \
-                '[.[] | select(.tag_name | startswith($prefix))][0].tag_name')
-    elif [[ "$pre_release" == "true" ]]; then
+        if [[ "$channel" == "unstable" ]]; then
+            tag=$(curl -sS "https://gitlab.com/api/v4/projects/${gitlab_project}/releases" \
+                | jq -r --arg prefix "$tag_prefix" \
+                    '[.[] | select(.tag_name | startswith($prefix))][0].tag_name')
+        else
+            # Stable: filter out pre-releases (upcoming_release flag)
+            tag=$(curl -sS "https://gitlab.com/api/v4/projects/${gitlab_project}/releases" \
+                | jq -r --arg prefix "$tag_prefix" \
+                    '[.[] | select(.tag_name | startswith($prefix)) | select(.upcoming_release != true)][0].tag_name')
+        fi
+    elif [[ "$channel" == "unstable" ]]; then
         repo=$(jq -r '.repo' "$pkg_file")
         tag=$(gh api "repos/${repo}/releases" --jq \
             "[.[] | select(.tag_name | startswith(\"${tag_prefix}\"))][0].tag_name")

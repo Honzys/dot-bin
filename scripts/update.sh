@@ -45,12 +45,15 @@ for name in "${packages[@]}"; do
     tag_prefix=$(jq -r '.tag_prefix // ""' "$pkg_file")
     version=$(strip_prefix "$tag" "$tag_prefix")
 
+    channel=$(jq -r '.channel // "stable"' "$pkg_file")
+    channel="${CHANNEL:-$channel}"
+
     if [[ "$version" == "$current" ]]; then
         echo "  ${name}: already at ${version}"
         continue
     fi
 
-    echo "  ${name}: ${current:-<none>} -> ${version} (archs: ${ARCHITECTURES[*]})"
+    echo "  ${name} [${channel}]: ${current:-<none>} -> ${version} (archs: ${ARCHITECTURES[*]})"
     if download_and_install "$pkg_file" "$tag"; then
         echo "  ${name}: installed ${version}"
         updated=$((updated + 1))
