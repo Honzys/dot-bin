@@ -50,6 +50,8 @@ get_latest_tag() {
                 | jq -r --arg prefix "$tag_prefix" \
                     '[.[] | select(.tag_name | startswith($prefix)) | select(.upcoming_release != true)][0].tag_name')
         fi
+    elif [[ "$source" == "kubernetes" ]]; then
+        tag=$(curl -sSL "https://dl.k8s.io/release/stable.txt")
     elif [[ "$channel" == "unstable" ]]; then
         repo=$(jq -r '.repo' "$pkg_file")
         tag=$(gh api "repos/${repo}/releases" --jq \
@@ -95,6 +97,15 @@ download_asset() {
         fi
 
         curl -sSL -o "${dest_dir}/${asset_name}" "$download_url"
+    elif [[ "$source" == "kubernetes" ]]; then
+        local k8s_arch download_url
+        case "$arch" in
+            x86_64) k8s_arch="amd64" ;;
+            arm64)  k8s_arch="arm64" ;;
+            *)      echo "ERROR: Unsupported architecture '${arch}' for kubernetes source" >&2; return 1 ;;
+        esac
+        download_url="https://dl.k8s.io/release/${tag}/bin/linux/${k8s_arch}/${asset_name}"
+        curl -sSL -o "${dest_dir}/${asset_name}" "$download_url"
     else
         repo=$(jq -r '.repo' "$pkg_file")
         gh release download "$tag" --repo "$repo" --pattern "$asset_name" --dir "$dest_dir"
@@ -134,6 +145,18 @@ download_checksum_file() {
         fi
 
         curl -sSL -o "${dest_dir}/${checksum_name}" "$download_url"
+    elif [[ "$source" == "kubernetes" ]]; then
+        local k8s_arch download_url
+        case "$arch" in
+            x86_64) k8s_arch="amd64" ;;
+            arm64)  k8s_arch="arm64" ;;
+            *)      echo "ERROR: Unsupported architecture '${arch}' for kubernetes source" >&2; return 1 ;;
+        esac
+        download_url="https://dl.k8s.io/release/${tag}/bin/linux/${k8s_arch}/${checksum_name}"
+        if ! curl -sSL -o "${dest_dir}/${checksum_name}" "$download_url"; then
+            echo "ERROR: Failed to download checksum file '${checksum_name}'" >&2
+            return 1
+        fi
     else
         local repo
         repo=$(jq -r '.repo' "$pkg_file")
