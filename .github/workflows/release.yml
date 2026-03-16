@@ -1,0 +1,85 @@
+name: Create release
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq unzip
+
+      - name: Save real versions.json and reset to empty
+        run: |
+          cp versions.json /tmp/versions-real.json
+          echo '{}' > versions.json
+
+      - name: Download all binaries
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOT_BIN_DIR: /tmp/staging/bin
+        run: |
+          mkdir -p /tmp/staging/bin
+          ./scripts/update.sh
+
+      - name: Restore real versions.json
+        run: |
+          cp /tmp/versions-real.json versions.json
+
+      - name: Create release tarballs
+        run: |
+          mkdir -p /tmp/release
+          for arch in x86_64 arm64; do
+            if [[ -d "/tmp/staging/bin/${arch}" ]] && ls "/tmp/staging/bin/${arch}/"* > /dev/null 2>&1; then
+              tar -czf "/tmp/release/dot-bin-${arch}.tar.gz" -C "/tmp/staging/bin/${arch}" .
+              echo "Created dot-bin-${arch}.tar.gz"
+            else
+              echo "WARNING: No binaries found for ${arch}, skipping tarball"
+            fi
+          done
+
+      - name: Generate checksums
+        run: |
+          cd /tmp/release
+          sha256sum dot-bin-*.tar.gz > checksums.sha256
+          cp "$GITHUB_WORKSPACE/versions.json" versions.json
+          cat checksums.sha256
+
+      - name: Generate release notes
+        run: |
+          python3 scripts/release-notes.py /dev/null versions.json > /tmp/release/notes.md
+
+      - name: Determine release tag
+        id: tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          TAG="$DATE"
+          SUFFIX=0
+          while gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; do
+            SUFFIX=$((SUFFIX + 1))
+            TAG="${DATE}.${SUFFIX}"
+          done
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Release tag: $TAG"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.tag.outputs.tag }}" \
+            /tmp/release/dot-bin-*.tar.gz \
+            /tmp/release/checksums.sha256 \
+            /tmp/release/versions.json \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "${{ steps.tag.outputs.tag }}" \
+            --notes-file /tmp/release/notes.md
