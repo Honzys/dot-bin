@@ -1,0 +1,8 @@
+{
+  "name": "pnpm",
+  "repo": "pnpm/pnpm",
+  "asset_pattern": "pnpm-linux-x64",
+  "tag_prefix": "v",
+  "format": "binary",
+  "output_binaries": ["pnpm"]
+}

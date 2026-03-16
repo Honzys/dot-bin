@@ -1,0 +1,9 @@
+{
+  "name": "bw",
+  "repo": "bitwarden/clients",
+  "asset_pattern": "bw-linux-{version}.zip",
+  "tag_prefix": "cli-v",
+  "format": "zip",
+  "extract_path": "bw",
+  "output_binaries": ["bw"]
+}

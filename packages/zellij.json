@@ -1,0 +1,9 @@
+{
+  "name": "zellij",
+  "repo": "zellij-org/zellij",
+  "asset_pattern": "zellij-x86_64-unknown-linux-musl.tar.gz",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "extract_path": "zellij",
+  "output_binaries": ["zellij"]
+}

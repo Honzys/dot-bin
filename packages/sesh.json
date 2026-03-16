@@ -1,0 +1,9 @@
+{
+  "name": "sesh",
+  "repo": "joshmedeski/sesh",
+  "asset_pattern": "sesh_Linux_x86_64.tar.gz",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "extract_path": "sesh",
+  "output_binaries": ["sesh"]
+}

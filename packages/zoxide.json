@@ -1,0 +1,9 @@
+{
+  "name": "zoxide",
+  "repo": "ajeetdsouza/zoxide",
+  "asset_pattern": "zoxide-{version}-x86_64-unknown-linux-musl.tar.gz",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "extract_path": "zoxide",
+  "output_binaries": ["zoxide"]
+}

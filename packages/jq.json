@@ -1,0 +1,8 @@
+{
+  "name": "jq",
+  "repo": "jqlang/jq",
+  "asset_pattern": "jq-linux-amd64",
+  "tag_prefix": "jq-",
+  "format": "binary",
+  "output_binaries": ["jq"]
+}

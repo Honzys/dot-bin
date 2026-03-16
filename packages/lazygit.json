@@ -1,0 +1,9 @@
+{
+  "name": "lazygit",
+  "repo": "jesseduffield/lazygit",
+  "asset_pattern": "lazygit_{version}_linux_x86_64.tar.gz",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "extract_path": "lazygit",
+  "output_binaries": ["lazygit"]
+}

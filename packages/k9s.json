@@ -1,0 +1,9 @@
+{
+  "name": "k9s",
+  "repo": "derailed/k9s",
+  "asset_pattern": "k9s_Linux_amd64.tar.gz",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "extract_path": "k9s",
+  "output_binaries": ["k9s"]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "fnm",
+  "repo": "Schniz/fnm",
+  "asset_pattern": "fnm-linux.zip",
+  "tag_prefix": "v",
+  "format": "zip",
+  "extract_path": "fnm",
+  "output_binaries": ["fnm"]
+}
