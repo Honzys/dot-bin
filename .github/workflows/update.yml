@@ -1,0 +1,133 @@
+name: Update and release binaries
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: "Space-separated package names (empty = all)"
+        required: false
+        default: ""
+      force:
+        description: "Force release even if no packages changed"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq unzip
+
+      - name: Fetch previous versions.json from latest release
+        id: prev
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p /tmp/prev
+          if gh release download --repo "$GITHUB_REPOSITORY" --pattern versions.json --dir /tmp/prev 2>/dev/null; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo '{}' > /tmp/prev/versions.json
+          fi
+
+      - name: Run update
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOT_BIN_DIR: /tmp/staging/bin
+        run: |
+          mkdir -p /tmp/staging/bin
+          if [[ -n "${{ inputs.packages }}" ]]; then
+            ./scripts/update.sh ${{ inputs.packages }}
+          else
+            ./scripts/update.sh
+          fi
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if diff -q /tmp/prev/versions.json versions.json > /dev/null 2>&1 && [[ "${{ inputs.force }}" != "true" ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No package changes detected, skipping release."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create release tarballs
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          mkdir -p /tmp/release
+          for arch in x86_64 arm64; do
+            if [[ -d "/tmp/staging/bin/${arch}" ]] && ls "/tmp/staging/bin/${arch}/"* > /dev/null 2>&1; then
+              tar -czf "/tmp/release/dot-bin-${arch}.tar.gz" -C "/tmp/staging/bin/${arch}" .
+              echo "Created dot-bin-${arch}.tar.gz"
+            else
+              echo "WARNING: No binaries found for ${arch}, skipping tarball"
+            fi
+          done
+
+      - name: Generate checksums
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          cd /tmp/release
+          sha256sum dot-bin-*.tar.gz > checksums.sha256
+          cp "$GITHUB_WORKSPACE/versions.json" versions.json
+          cat checksums.sha256
+
+      - name: Generate release notes
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          python3 scripts/release-notes.py /tmp/prev/versions.json versions.json > /tmp/release/notes.md
+
+      - name: Determine release tag
+        if: steps.diff.outputs.changed == 'true'
+        id: tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          TAG="$DATE"
+          SUFFIX=0
+          while gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; do
+            SUFFIX=$((SUFFIX + 1))
+            TAG="${DATE}.${SUFFIX}"
+          done
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Release tag: $TAG"
+
+      - name: Create GitHub Release
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.tag.outputs.tag }}" \
+            /tmp/release/dot-bin-*.tar.gz \
+            /tmp/release/checksums.sha256 \
+            /tmp/release/versions.json \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "${{ steps.tag.outputs.tag }}" \
+            --notes-file /tmp/release/notes.md
+
+      - name: Commit versions.json
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add versions.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update versions.json (${{ steps.tag.outputs.tag }})"
+            git push
+          fi

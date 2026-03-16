@@ -1,0 +1,21 @@
+{
+  "name": "k9s",
+  "repo": "derailed/k9s",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["k9s"],
+  "checksum": {
+    "asset": "checksums.sha256",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "k9s_Linux_amd64.tar.gz",
+      "extract_path": "k9s"
+    },
+    "arm64": {
+      "asset_pattern": "k9s_Linux_arm64.tar.gz",
+      "extract_path": "k9s"
+    }
+  }
+}

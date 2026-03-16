@@ -1,0 +1,15 @@
+{
+  "name": "pnpm",
+  "repo": "pnpm/pnpm",
+  "tag_prefix": "v",
+  "format": "binary",
+  "output_binaries": ["pnpm"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "pnpm-linux-x64"
+    },
+    "arm64": {
+      "asset_pattern": "pnpm-linux-arm64"
+    }
+  }
+}

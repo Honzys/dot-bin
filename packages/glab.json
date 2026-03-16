@@ -1,0 +1,22 @@
+{
+  "name": "glab",
+  "source": "gitlab",
+  "gitlab_project": "gitlab-org%2Fcli",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["glab"],
+  "checksum": {
+    "asset": "checksums.txt",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "glab_{version}_linux_amd64.tar.gz",
+      "extract_path": "bin/glab"
+    },
+    "arm64": {
+      "asset_pattern": "glab_{version}_linux_arm64.tar.gz",
+      "extract_path": "bin/glab"
+    }
+  }
+}

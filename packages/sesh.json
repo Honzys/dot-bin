@@ -1,0 +1,21 @@
+{
+  "name": "sesh",
+  "repo": "joshmedeski/sesh",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["sesh"],
+  "checksum": {
+    "asset": "sesh_{version}_checksums.txt",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "sesh_Linux_x86_64.tar.gz",
+      "extract_path": "sesh"
+    },
+    "arm64": {
+      "asset_pattern": "sesh_Linux_arm64.tar.gz",
+      "extract_path": "sesh"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "fnm",
+  "repo": "Schniz/fnm",
+  "tag_prefix": "v",
+  "format": "zip",
+  "output_binaries": ["fnm"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "fnm-linux.zip",
+      "extract_path": "fnm"
+    },
+    "arm64": {
+      "asset_pattern": "fnm-arm64.zip",
+      "extract_path": "fnm"
+    }
+  }
+}

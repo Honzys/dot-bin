@@ -1,0 +1,19 @@
+{
+  "name": "jq",
+  "repo": "jqlang/jq",
+  "tag_prefix": "jq-",
+  "format": "binary",
+  "output_binaries": ["jq"],
+  "checksum": {
+    "asset": "sha256sum.txt",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "jq-linux-amd64"
+    },
+    "arm64": {
+      "asset_pattern": "jq-linux-arm64"
+    }
+  }
+}

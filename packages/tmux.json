@@ -1,0 +1,17 @@
+{
+  "name": "tmux",
+  "repo": "tmux/tmux-builds",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["tmux"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "tmux-{version}-linux-x86_64.tar.gz",
+      "extract_path": "tmux"
+    },
+    "arm64": {
+      "asset_pattern": "tmux-{version}-linux-arm64.tar.gz",
+      "extract_path": "tmux"
+    }
+  }
+}
