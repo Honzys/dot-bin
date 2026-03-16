@@ -3,7 +3,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BIN_DIR="${REPO_ROOT}/bin"
+BIN_DIR="${DOT_BIN_DIR:-${REPO_ROOT}/bin}"
 VERSIONS_FILE="${REPO_ROOT}/versions.json"
 ARCHITECTURES=("x86_64" "arm64")
 

@@ -1,21 +1,22 @@
 # dot-bin
 
-Portable, version-controlled CLI toolchain. All binaries tracked via git-lfs with automated updates from upstream GitHub/GitLab releases.
+Portable CLI toolchain with automated updates from upstream GitHub/GitLab releases. Binaries are published as GitHub Release tarballs — no git-lfs, no bloated clones.
 
-## Usage
-
-```bash
-git clone <repo-url>
-ARCH=$(uname -m | sed 's/aarch64/arm64/')
-export PATH="$HOME/projects/dot-bin/bin/${ARCH}:$PATH"
-```
-
-## Updating
+## Install
 
 ```bash
-./scripts/update.sh              # update all packages
-./scripts/update.sh nvim lazygit # update specific packages
+curl -fsSL https://raw.githubusercontent.com/Honzys/dot-bin/master/install.sh | bash
 ```
+
+This detects your architecture, downloads the latest release tarball, verifies the SHA256 checksum, and extracts binaries to `~/.local/bin/`.
+
+To install to a custom directory:
+
+```bash
+DOT_BIN_INSTALL_DIR=/opt/bin bash install.sh
+```
+
+Re-run the same command to update.
 
 ## Packages
 
@@ -37,16 +38,35 @@ export PATH="$HOME/projects/dot-bin/bin/${ARCH}:$PATH"
 | pnpm | pnpm/pnpm | Node package manager |
 | codex | openai/codex | OpenAI Codex CLI |
 
+## Local Development
+
+The update scripts still work locally for development/testing:
+
+```bash
+./scripts/update.sh              # update all packages
+./scripts/update.sh nvim lazygit # update specific packages
+```
+
+Binaries go to `bin/` (gitignored). Override with `DOT_BIN_DIR`:
+
+```bash
+DOT_BIN_DIR=/tmp/test/bin ./scripts/update.sh jq
+```
+
 ## Structure
 
 ```
 packages/        — per-package JSON definitions
 scripts/         — update driver and shared library
-bin/x86_64/      — x86_64 binaries (git-lfs tracked)
-bin/arm64/       — arm64 binaries (git-lfs tracked)
+install.sh       — user-facing install/update script
 versions.json    — current versions (auto-generated)
 ```
 
 ## CI
 
-GitHub Actions runs daily at 06:00 UTC to check for upstream updates. Can also be triggered manually with an optional package filter.
+GitHub Actions runs daily at 06:00 UTC. For each upstream update:
+
+1. Downloads new binaries to a staging directory
+2. Creates `dot-bin-{arch}.tar.gz` tarballs (x86_64 + arm64)
+3. Publishes a date-tagged GitHub Release with tarballs + checksums
+4. Commits only `versions.json` to the repo

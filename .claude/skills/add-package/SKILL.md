@@ -250,7 +250,7 @@ If the download fails, common issues:
 ### Step 5: Commit
 
 ```bash
-git add packages/<name>.json bin/ versions.json
+git add packages/<name>.json versions.json
 git commit -m "feat: add <name> package"
 ```
 
