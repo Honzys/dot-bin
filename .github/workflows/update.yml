@@ -1,4 +1,4 @@
-name: Update and release binaries
+name: Update packages
 
 on:
   schedule:
@@ -9,14 +9,10 @@ on:
         description: "Space-separated package names (empty = all)"
         required: false
         default: ""
-      force:
-        description: "Force release even if no packages changed"
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   update:
@@ -29,18 +25,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq unzip
 
-      - name: Fetch previous versions.json from latest release
-        id: prev
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir -p /tmp/prev
-          if gh release download --repo "$GITHUB_REPOSITORY" --pattern versions.json --dir /tmp/prev 2>/dev/null; then
-            echo "found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "found=false" >> "$GITHUB_OUTPUT"
-            echo '{}' > /tmp/prev/versions.json
-          fi
+      - name: Save current versions
+        run: cp versions.json /tmp/versions-old.json
 
       - name: Run update
         env:
@@ -57,77 +43,47 @@ jobs:
       - name: Check for changes
         id: diff
         run: |
-          if diff -q /tmp/prev/versions.json versions.json > /dev/null 2>&1 && [[ "${{ inputs.force }}" != "true" ]]; then
+          if diff -q /tmp/versions-old.json versions.json > /dev/null 2>&1; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No package changes detected, skipping release."
+            echo "No package changes detected."
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create release tarballs
+      - name: Bump CHANGELOG
         if: steps.diff.outputs.changed == 'true'
+        id: bump
         run: |
-          mkdir -p /tmp/release
-          for arch in x86_64 arm64; do
-            if [[ -d "/tmp/staging/bin/${arch}" ]] && ls "/tmp/staging/bin/${arch}/"* > /dev/null 2>&1; then
-              tar -czf "/tmp/release/dot-bin-${arch}.tar.gz" -C "/tmp/staging/bin/${arch}" .
-              echo "Created dot-bin-${arch}.tar.gz"
-            else
-              echo "WARNING: No binaries found for ${arch}, skipping tarball"
-            fi
-          done
+          VERSION=$(python3 scripts/bump-changelog.py /tmp/versions-old.json versions.json)
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Bumped to ${VERSION}"
 
-      - name: Generate checksums
-        if: steps.diff.outputs.changed == 'true'
-        run: |
-          cd /tmp/release
-          sha256sum dot-bin-*.tar.gz > checksums.sha256
-          cp "$GITHUB_WORKSPACE/versions.json" versions.json
-          cat checksums.sha256
-
-      - name: Generate release notes
-        if: steps.diff.outputs.changed == 'true'
-        run: |
-          python3 scripts/release-notes.py /tmp/prev/versions.json versions.json > /tmp/release/notes.md
-
-      - name: Determine release tag
-        if: steps.diff.outputs.changed == 'true'
-        id: tag
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          DATE=$(date -u +%Y-%m-%d)
-          TAG="$DATE"
-          SUFFIX=0
-          while gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; do
-            SUFFIX=$((SUFFIX + 1))
-            TAG="${DATE}.${SUFFIX}"
-          done
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "Release tag: $TAG"
-
-      - name: Create GitHub Release
+      - name: Create or update PR
         if: steps.diff.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ steps.tag.outputs.tag }}" \
-            /tmp/release/dot-bin-*.tar.gz \
-            /tmp/release/checksums.sha256 \
-            /tmp/release/versions.json \
-            --repo "$GITHUB_REPOSITORY" \
-            --title "${{ steps.tag.outputs.tag }}" \
-            --notes-file /tmp/release/notes.md
+          VERSION="${{ steps.bump.outputs.version }}"
+          BRANCH="chore/update-packages"
 
-      - name: Commit versions.json
-        if: steps.diff.outputs.changed == 'true'
-        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add versions.json
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
+          git checkout -b "$BRANCH"
+          git add versions.json CHANGELOG.md
+          git commit -m "chore: update packages to v${VERSION}"
+          git push -u origin "$BRANCH" --force
+
+          # Create PR if one doesn't already exist
+          EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [[ -n "$EXISTING" ]]; then
+            echo "Updated existing PR #${EXISTING}"
           else
-            git commit -m "chore: update versions.json (${{ steps.tag.outputs.tag }})"
-            git push
+            gh pr create \
+              --title "chore: update packages to v${VERSION}" \
+              --body "$(cat <<EOF
+          ## Summary
+          Automated package update to v${VERSION}. See CHANGELOG.md for details.
+          EOF
+          )" \
+              --base master
           fi
