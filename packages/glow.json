@@ -1,0 +1,21 @@
+{
+  "name": "glow",
+  "repo": "charmbracelet/glow",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["glow"],
+  "checksum": {
+    "asset": "checksums.txt",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "glow_{version}_Linux_x86_64.tar.gz",
+      "extract_path": "*/glow"
+    },
+    "arm64": {
+      "asset_pattern": "glow_{version}_Linux_arm64.tar.gz",
+      "extract_path": "*/glow"
+    }
+  }
+}
