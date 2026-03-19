@@ -1,8 +1,10 @@
-# dot-bin -- Developer Guide
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Overview
 
-Manages portable CLI tool binaries with automated updates from upstream GitHub/GitLab releases. Each tool is defined by a JSON file in `packages/`, and `scripts/update.sh` handles downloading, verifying, extracting, and installing binaries for both x86_64 and arm64 architectures. CI publishes release tarballs to GitHub Releases; users install via `curl | bash`.
+Manages portable CLI tool binaries with automated updates from upstream GitHub/GitLab/Kubernetes releases. Each tool is defined by a JSON file in `packages/`, and `scripts/update.sh` handles downloading, verifying, extracting, and installing binaries for both x86_64 and arm64 architectures. CI creates PRs for package updates; merging to master triggers a release via GitHub Actions.
 
 ## Quick Reference
 
@@ -37,11 +39,11 @@ Each package is defined in `packages/<name>.json`. Fields:
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `name` | string | yes | Package identifier, must match filename |
-| `repo` | string | yes* | GitHub `owner/repo` (*omit for GitLab sources) |
-| `source` | string | no | `"github"` (default) or `"gitlab"` |
+| `repo` | string | yes* | GitHub `owner/repo` (*omit for GitLab/Kubernetes sources) |
+| `source` | string | no | `"github"` (default), `"gitlab"`, or `"kubernetes"` |
 | `gitlab_project` | string | no | URL-encoded GitLab project path (required when `source` is `"gitlab"`) |
 | `tag_prefix` | string | no | Prefix stripped from git tag to get version (e.g. `"v"`, `"cli-v"`, `"jq-"`, `""`) |
-| `channel` | string | no | `"stable"` (default) or `"unstable"` — stable uses latest non-pre-release; unstable includes pre-releases |
+| `channel` | string | no | `"stable"` (default) or `"unstable"` -- stable uses latest non-pre-release; unstable includes pre-releases |
 | `format` | string | yes | `"tarball"`, `"zip"`, or `"binary"` |
 | `output_binaries` | string[] | yes | Binary names placed in `bin/{arch}/` |
 | `checksum.asset` | string | no | Checksum filename in the release (supports `{version}` placeholder) |
@@ -126,6 +128,22 @@ GitLab source (`glab`):
 }
 ```
 
+Kubernetes source (`kubectl`):
+```json
+{
+  "name": "kubectl",
+  "source": "kubernetes",
+  "tag_prefix": "v",
+  "format": "binary",
+  "output_binaries": ["kubectl"],
+  "checksum": { "algorithm": "sha256" },
+  "architectures": {
+    "x86_64": { "asset_pattern": "kubectl", "checksum_asset": "kubectl.sha256" },
+    "arm64": { "asset_pattern": "kubectl", "checksum_asset": "kubectl.sha256" }
+  }
+}
+```
+
 ## Adding a New Package
 
 1. Find the repo and examine its latest release assets
@@ -147,8 +165,8 @@ GitLab source (`glab`):
 - `get_current_version(name)` -- reads version from `versions.json`
 - `set_version(name, version)` -- writes version to `versions.json`
 - `strip_prefix(tag, prefix)` -- removes tag prefix to get clean version
-- `get_latest_tag(pkg_file)` -- queries GitHub API (`gh api`) or GitLab API for latest release tag; respects `channel` setting (`stable`/`unstable`) and `CHANNEL` env var override
-- `download_asset(pkg_file, tag, dest_dir, arch)` -- downloads the per-arch release asset via `gh release download` (GitHub) or `curl` (GitLab)
+- `get_latest_tag(pkg_file)` -- queries GitHub API (`gh api`), GitLab API, or Kubernetes stable endpoint for latest release tag; respects `channel` setting (`stable`/`unstable`) and `CHANNEL` env var override
+- `download_asset(pkg_file, tag, dest_dir, arch)` -- downloads the per-arch release asset via `gh release download` (GitHub), `curl` (GitLab), or Kubernetes download URL
 - `download_checksum_file(pkg_file, tag, dest_dir, arch)` -- downloads checksum file, respects arch-specific overrides
 - `verify_checksum(pkg_file, asset_name, asset_path, tag, arch)` -- validates SHA256/512 against downloaded checksum file
 - `resolve_path(base_dir, pattern)` -- resolves extract paths including wildcard/glob patterns
@@ -160,6 +178,13 @@ GitLab source (`glab`):
 - Accepts optional package names as arguments (defaults to all)
 - For each package: fetches latest tag, compares to current version, downloads and installs if newer
 - Exits with code 1 if any package failed
+
+**`scripts/bump-changelog.py`** -- automated CHANGELOG management:
+- Usage: `bump-changelog.py <old-versions.json> <new-versions.json>`
+- Diffs old/new versions to find added, updated, and removed packages
+- Bumps patch version from latest CHANGELOG entry (e.g. `0.4.0` -> `0.4.1`)
+- Inserts a new changelog section with categorized changes (Updated/Added/Removed)
+- Prints the new version to stdout; exits with code 2 if no changes detected
 
 **`scripts/release-notes.py`** -- generates markdown release notes by diffing old/new `versions.json`
 
@@ -186,21 +211,32 @@ update.sh [pkg...]
 
 ### CI
 
-GitHub Actions (`.github/workflows/update.yml`) runs daily at 06:00 UTC and can be triggered manually with optional package filter and force flag.
+Two GitHub Actions workflows handle the update-and-release pipeline:
 
-CI flow:
-1. Checks out repo (no LFS)
-2. Fetches previous `versions.json` from latest release
-3. Runs `update.sh` with `DOT_BIN_DIR` pointing to staging directory
-4. Skips release if `versions.json` unchanged (unless force=true)
-5. Creates `dot-bin-{arch}.tar.gz` tarballs with SHA256 checksums
-6. Publishes date-tagged GitHub Release with tarballs + checksums + versions.json
-7. Commits only `versions.json` to the repo
+**`update.yml`** -- daily package updates (06:00 UTC, or manual dispatch):
+1. Checks out repo, saves current `versions.json`
+2. Runs `update.sh` (all packages or filtered via input)
+3. If `versions.json` changed, runs `bump-changelog.py` to bump version and update CHANGELOG.md
+4. Creates/updates a PR (`chore/update-packages` branch) targeting master with the version and changelog changes
+
+**`release.yml`** -- triggered on push to master:
+1. Extracts the latest version from CHANGELOG.md (first `## [x.y.z]` heading)
+2. Skips if no version found or release already exists for that tag
+3. Downloads all binaries by running `update.sh` with empty `versions.json`
+4. Creates `dot-bin-{arch}.tar.gz` tarballs with SHA256 checksums
+5. Extracts release notes from CHANGELOG.md for the current version
+6. Publishes a GitHub Release tagged `v{version}` with tarballs, checksums, and versions.json
+
+**`ci.yml`** -- PR validation:
+1. Detects changed package JSON files in the PR
+2. Downloads and installs changed packages (or all if no package changes)
+3. Verifies all binaries are valid ELF 64-bit executables
+4. Validates `versions.json` is valid JSON
 
 ### Release Distribution
 
-- **Tagging**: Date-based (`2026-03-16`), with `.N` suffix for same-day duplicates
-- **Tarball structure**: Flat binaries at top level — `tar xzf dot-bin-x86_64.tar.gz -C ~/.local/bin/` just works
+- **Tagging**: Semantic version-based (`v0.4.0`), driven by CHANGELOG.md version
+- **Tarball structure**: Flat binaries at top level -- `tar xzf dot-bin-x86_64.tar.gz -C ~/.local/bin/` just works
 - **Install**: `curl -fsSL .../install.sh | bash` downloads latest release to `~/.local/bin/`
 
 ## Conventions
@@ -209,4 +245,5 @@ CI flow:
 - **JSON**: 2-space indent, one package per file in `packages/`, filename matches `name` field
 - **bin/**: Gitignored, not tracked in the repo. Binaries are distributed via GitHub Releases
 - **versions.json**: Auto-generated by update.sh, do not edit manually
+- **CHANGELOG.md**: Auto-updated by `bump-changelog.py` during CI; manual edits for feature releases
 - **Commit messages**: Conventional commits (`feat:` for new packages, `chore:` for updates, `fix:` for bug fixes)

@@ -56,6 +56,12 @@ get_latest_tag() {
         repo=$(jq -r '.repo' "$pkg_file")
         tag=$(gh api "repos/${repo}/releases" --jq \
             "[.[] | select(.tag_name | startswith(\"${tag_prefix}\"))][0].tag_name")
+    elif [[ -n "$tag_prefix" ]]; then
+        # Stable with tag_prefix: filter by prefix and exclude pre-releases
+        # (repos like bitwarden/clients publish multiple products with different prefixes)
+        repo=$(jq -r '.repo' "$pkg_file")
+        tag=$(gh api "repos/${repo}/releases" --jq \
+            "[.[] | select(.tag_name | startswith(\"${tag_prefix}\")) | select(.prerelease == false)][0].tag_name")
     else
         repo=$(jq -r '.repo' "$pkg_file")
         tag=$(gh api "repos/${repo}/releases/latest" --jq '.tag_name')
