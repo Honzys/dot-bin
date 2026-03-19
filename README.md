@@ -51,6 +51,8 @@ CHANNEL=stable ./scripts/update.sh codex    # get stable codex even though JSON 
 | tmux | tmux/tmux-builds | Terminal multiplexer |
 | pnpm | pnpm/pnpm | Node package manager |
 | codex | openai/codex | OpenAI Codex CLI |
+| kubectl | kubernetes/kubectl | Kubernetes CLI |
+| glow | charmbracelet/glow | Terminal markdown renderer |
 
 ## Local Development
 
