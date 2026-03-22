@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.4.2] - 2026-03-22
+
+### Updated
+
+- codex: 0.115.0-alpha.26 → 0.116.0
+- kubectl: 1.35.2 → 1.35.3
+- uv: 0.10.10 → 0.10.12
+
 ## [0.4.1] - 2026-03-19
 
 ### Added
