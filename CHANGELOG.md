@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] - 2026-04-10
+
+### Added
+
+- rtk (rtk-ai/rtk) — AI coding agent CLI
+
+### Fixed
+
+- Daily update workflow: replaced manual git push + gh pr create with peter-evans/create-pull-request action to fix GITHUB_TOKEN permission failures on scheduled runs
+
 ## [0.4.1] - 2026-03-19
 
 ### Added

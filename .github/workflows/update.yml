@@ -60,30 +60,13 @@ jobs:
 
       - name: Create or update PR
         if: steps.diff.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VERSION="${{ steps.bump.outputs.version }}"
-          BRANCH="chore/update-packages"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b "$BRANCH"
-          git add versions.json CHANGELOG.md
-          git commit -m "chore: update packages to v${VERSION}"
-          git push -u origin "$BRANCH" --force
-
-          # Create PR if one doesn't already exist
-          EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
-          if [[ -n "$EXISTING" ]]; then
-            echo "Updated existing PR #${EXISTING}"
-          else
-            gh pr create \
-              --title "chore: update packages to v${VERSION}" \
-              --body "$(cat <<EOF
-          ## Summary
-          Automated package update to v${VERSION}. See CHANGELOG.md for details.
-          EOF
-          )" \
-              --base master
-          fi
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update packages to v${{ steps.bump.outputs.version }}"
+          branch: chore/update-packages
+          title: "chore: update packages to v${{ steps.bump.outputs.version }}"
+          body: |
+            ## Summary
+            Automated package update to v${{ steps.bump.outputs.version }}. See CHANGELOG.md for details.
+          base: master
