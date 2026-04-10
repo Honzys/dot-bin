@@ -53,6 +53,7 @@ CHANNEL=stable ./scripts/update.sh codex    # get stable codex even though JSON 
 | codex | openai/codex | OpenAI Codex CLI |
 | kubectl | kubernetes/kubectl | Kubernetes CLI |
 | glow | charmbracelet/glow | Terminal markdown renderer |
+| rtk | rtk-ai/rtk | AI coding agent CLI |
 
 ## Local Development
 
@@ -80,9 +81,8 @@ versions.json    — current versions (auto-generated)
 
 ## CI
 
-GitHub Actions runs daily at 06:00 UTC. For each upstream update:
+**Daily updates** (`update.yml`): Runs at 06:00 UTC. Checks all packages for new upstream releases, bumps `CHANGELOG.md`, and creates/updates a PR via `peter-evans/create-pull-request`.
 
-1. Downloads new binaries to a staging directory
-2. Creates `dot-bin-{arch}.tar.gz` tarballs (x86_64 + arm64)
-3. Publishes a date-tagged GitHub Release with tarballs + checksums
-4. Commits only `versions.json` to the repo
+**Release** (`release.yml`): Triggered on push to master. Extracts the version from `CHANGELOG.md`, downloads all binaries, creates `dot-bin-{arch}.tar.gz` tarballs with SHA256 checksums, and publishes a GitHub Release.
+
+**PR validation** (`ci.yml`): Runs on pull requests. Downloads changed packages (or all), verifies binaries are valid ELF 64-bit executables, and validates `versions.json`.
