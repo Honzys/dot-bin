@@ -54,6 +54,10 @@ CHANNEL=stable ./scripts/update.sh codex    # get stable codex even though JSON 
 | kubectl | kubernetes/kubectl | Kubernetes CLI |
 | glow | charmbracelet/glow | Terminal markdown renderer |
 | rtk | rtk-ai/rtk | AI coding agent CLI |
+| git-lfs | git-lfs/git-lfs | Git Large File Storage |
+| chezmoi | twpayne/chezmoi | Dotfile manager |
+| trippy | fujiapple852/trippy | Network diagnostic TUI (traceroute + ping) |
+| xh | ducaale/xh | HTTP client (like curl/httpie) |
 
 ## Local Development
 

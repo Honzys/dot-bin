@@ -1,0 +1,21 @@
+{
+  "name": "chezmoi",
+  "repo": "twpayne/chezmoi",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["chezmoi"],
+  "checksum": {
+    "asset": "chezmoi_{version}_checksums.txt",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "chezmoi_{version}_linux_amd64.tar.gz",
+      "extract_path": "chezmoi"
+    },
+    "arm64": {
+      "asset_pattern": "chezmoi_{version}_linux_arm64.tar.gz",
+      "extract_path": "chezmoi"
+    }
+  }
+}

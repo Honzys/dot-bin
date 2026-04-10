@@ -1,0 +1,17 @@
+{
+  "name": "trippy",
+  "repo": "fujiapple852/trippy",
+  "tag_prefix": "",
+  "format": "tarball",
+  "output_binaries": ["trip"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "trippy-{version}-x86_64-unknown-linux-musl.tar.gz",
+      "extract_path": "trippy-*/trip"
+    },
+    "arm64": {
+      "asset_pattern": "trippy-{version}-aarch64-unknown-linux-musl.tar.gz",
+      "extract_path": "trippy-*/trip"
+    }
+  }
+}

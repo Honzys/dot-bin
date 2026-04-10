@@ -1,0 +1,21 @@
+{
+  "name": "git-lfs",
+  "repo": "git-lfs/git-lfs",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["git-lfs"],
+  "checksum": {
+    "asset": "sha256sums.asc",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "git-lfs-linux-amd64-v{version}.tar.gz",
+      "extract_path": "git-lfs-*/git-lfs"
+    },
+    "arm64": {
+      "asset_pattern": "git-lfs-linux-arm64-v{version}.tar.gz",
+      "extract_path": "git-lfs-*/git-lfs"
+    }
+  }
+}

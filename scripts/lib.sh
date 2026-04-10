@@ -203,7 +203,7 @@ verify_checksum() {
 
     # Extract expected hash — handles GNU format: "<hash>  <filename>" or "<hash> <filename>"
     local expected_hash
-    expected_hash=$(awk -v name="$asset_name" '$NF == name {print $1; exit}' "$checksum_file_path")
+    expected_hash=$(awk -v name="$asset_name" '$NF == name || $NF == "*"name {print $1; exit}' "$checksum_file_path")
 
     if [[ -z "$expected_hash" ]]; then
         # Per-asset checksum files may have a single entry with a different path

@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - rtk (rtk-ai/rtk) — AI coding agent CLI
+- git-lfs (git-lfs/git-lfs) — Git Large File Storage
+- chezmoi (twpayne/chezmoi) — dotfile manager
+- trippy (fujiapple852/trippy) — network diagnostic TUI (traceroute + ping)
+- xh (ducaale/xh) — HTTP client (like curl/httpie)
 
 ### Fixed
 
 - Daily update workflow: replaced manual git push + gh pr create with peter-evans/create-pull-request action to fix GITHUB_TOKEN permission failures on scheduled runs
+- Checksum verification now handles binary-mode `*filename` format (used by git-lfs)
 
 ## [0.4.1] - 2026-03-19
 
