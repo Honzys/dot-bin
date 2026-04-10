@@ -58,8 +58,9 @@ jobs:
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "Bumped to ${VERSION}"
 
-      - name: Create or update PR
+      - name: Create PR
         if: steps.diff.outputs.changed == 'true'
+        id: create-pr
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -70,3 +71,18 @@ jobs:
             ## Summary
             Automated package update to v${{ steps.bump.outputs.version }}. See CHANGELOG.md for details.
           base: master
+
+      - name: Merge PR
+        if: steps.create-pr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge ${{ steps.create-pr.outputs.pull-request-number }} --squash --delete-branch
+
+      - name: Trigger release
+        if: steps.create-pr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # GITHUB_TOKEN push events don't trigger workflows,
+          # so dispatch the release workflow explicitly
+          gh workflow run release.yml
