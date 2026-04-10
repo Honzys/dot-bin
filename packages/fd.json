@@ -1,0 +1,17 @@
+{
+  "name": "fd",
+  "repo": "sharkdp/fd",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["fd"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "fd-v{version}-x86_64-unknown-linux-musl.tar.gz",
+      "extract_path": "fd-*/fd"
+    },
+    "arm64": {
+      "asset_pattern": "fd-v{version}-aarch64-unknown-linux-musl.tar.gz",
+      "extract_path": "fd-*/fd"
+    }
+  }
+}

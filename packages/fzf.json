@@ -1,0 +1,21 @@
+{
+  "name": "fzf",
+  "repo": "junegunn/fzf",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["fzf"],
+  "checksum": {
+    "asset": "fzf_{version}_checksums.txt",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "fzf-{version}-linux_amd64.tar.gz",
+      "extract_path": "fzf"
+    },
+    "arm64": {
+      "asset_pattern": "fzf-{version}-linux_arm64.tar.gz",
+      "extract_path": "fzf"
+    }
+  }
+}

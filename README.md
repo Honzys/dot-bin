@@ -58,6 +58,9 @@ CHANNEL=stable ./scripts/update.sh codex    # get stable codex even though JSON 
 | chezmoi | twpayne/chezmoi | Dotfile manager |
 | trippy | fujiapple852/trippy | Network diagnostic TUI (traceroute + ping) |
 | xh | ducaale/xh | HTTP client (like curl/httpie) |
+| fd | sharkdp/fd | Modern find replacement |
+| ripgrep | BurntSushi/ripgrep | Fast grep (binary: `rg`) |
+| fzf | junegunn/fzf | Fuzzy finder |
 
 ## Local Development
 

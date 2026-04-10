@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - chezmoi (twpayne/chezmoi) — dotfile manager
 - trippy (fujiapple852/trippy) — network diagnostic TUI (traceroute + ping)
 - xh (ducaale/xh) — HTTP client (like curl/httpie)
+- fd (sharkdp/fd) — modern find replacement
+- ripgrep (BurntSushi/ripgrep) — fast grep (`rg`)
+- fzf (junegunn/fzf) — fuzzy finder
 
 ### Fixed
 
