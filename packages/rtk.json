@@ -1,0 +1,21 @@
+{
+  "name": "rtk",
+  "repo": "rtk-ai/rtk",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["rtk"],
+  "checksum": {
+    "asset": "checksums.txt",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "rtk-x86_64-unknown-linux-musl.tar.gz",
+      "extract_path": "rtk"
+    },
+    "arm64": {
+      "asset_pattern": "rtk-aarch64-unknown-linux-gnu.tar.gz",
+      "extract_path": "rtk"
+    }
+  }
+}
