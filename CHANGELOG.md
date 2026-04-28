@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.5.1] - 2026-04-28
+
+### Updated
+
+- bw: 2026.2.0 → 2026.4.1
+- codex: 0.115.0-alpha.26 → 0.125.0
+- gh: 2.88.1 → 2.91.0
+- glab: 1.89.0 → 1.93.0
+- glow: 2.1.1 → 2.1.2
+- kubectl: 1.35.2 → 1.36.0
+- lazygit: 0.60.0 → 0.61.1
+- nvim: 0.11.6 → 0.12.2
+- pnpm: 10.32.1 → 10.33.2
+- sesh: 2.24.2 → 2.26.1
+- uv: 0.10.10 → 0.11.8
+- zellij: 0.43.1 → 0.44.1
+
+### Added
+
+- rtk 0.37.2
+
 ## [0.5.0] - 2026-04-10
 
 ### Added
