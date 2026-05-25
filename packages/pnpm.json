@@ -2,14 +2,16 @@
   "name": "pnpm",
   "repo": "pnpm/pnpm",
   "tag_prefix": "v",
-  "format": "binary",
+  "format": "tarball",
   "output_binaries": ["pnpm"],
   "architectures": {
     "x86_64": {
-      "asset_pattern": "pnpm-linux-x64"
+      "asset_pattern": "pnpm-linux-x64.tar.gz",
+      "extract_path": "pnpm"
     },
     "arm64": {
-      "asset_pattern": "pnpm-linux-arm64"
+      "asset_pattern": "pnpm-linux-arm64.tar.gz",
+      "extract_path": "pnpm"
     }
   }
 }

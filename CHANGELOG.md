@@ -5,15 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.6.0] - 2026-05-25
+
+### Added
+
+- speedtest (librespeed/speedtest-cli) — network speed test CLI
+
+### Fixed
+
+- codex: updated asset patterns from `gnu` to `musl` (upstream change)
+- pnpm: changed format from `binary` to `tarball` (upstream now ships `.tar.gz`)
+
+### Changed
+
+- Removed daily cron schedule from update workflow, now manual dispatch only
+
 ## [0.5.0] - 2026-04-10
 
 ### Added
 
 - rtk (rtk-ai/rtk) — AI coding agent CLI
+- git-lfs (git-lfs/git-lfs) — Git Large File Storage
+- chezmoi (twpayne/chezmoi) — dotfile manager
+- trippy (fujiapple852/trippy) — network diagnostic TUI (traceroute + ping)
+- xh (ducaale/xh) — HTTP client (like curl/httpie)
+- fd (sharkdp/fd) — modern find replacement
+- ripgrep (BurntSushi/ripgrep) — fast grep (`rg`)
+- fzf (junegunn/fzf) — fuzzy finder
 
 ### Fixed
 
 - Daily update workflow: replaced manual git push + gh pr create with peter-evans/create-pull-request action to fix GITHUB_TOKEN permission failures on scheduled runs
+- Checksum verification now handles binary-mode `*filename` format (used by git-lfs)
 
 ## [0.4.1] - 2026-03-19
 

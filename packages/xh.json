@@ -1,0 +1,17 @@
+{
+  "name": "xh",
+  "repo": "ducaale/xh",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["xh"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "xh-v{version}-x86_64-unknown-linux-musl.tar.gz",
+      "extract_path": "xh-*/xh"
+    },
+    "arm64": {
+      "asset_pattern": "xh-v{version}-aarch64-unknown-linux-musl.tar.gz",
+      "extract_path": "xh-*/xh"
+    }
+  }
+}
