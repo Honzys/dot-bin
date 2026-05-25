@@ -61,6 +61,7 @@ CHANNEL=stable ./scripts/update.sh codex    # get stable codex even though JSON 
 | fd | sharkdp/fd | Modern find replacement |
 | ripgrep | BurntSushi/ripgrep | Fast grep (binary: `rg`) |
 | fzf | junegunn/fzf | Fuzzy finder |
+| speedtest | librespeed/speedtest-cli | Network speed test CLI |
 
 ## Local Development
 
@@ -88,7 +89,7 @@ versions.json    — current versions (auto-generated)
 
 ## CI
 
-**Daily updates** (`update.yml`): Runs at 06:00 UTC. Checks all packages for new upstream releases, bumps `CHANGELOG.md`, and creates/updates a PR via `peter-evans/create-pull-request`.
+**Update** (`update.yml`): Manual dispatch only. Checks all packages (or specified ones) for new upstream releases, bumps `CHANGELOG.md`, and creates/updates a PR via `peter-evans/create-pull-request`.
 
 **Release** (`release.yml`): Triggered on push to master. Extracts the version from `CHANGELOG.md`, downloads all binaries, creates `dot-bin-{arch}.tar.gz` tarballs with SHA256 checksums, and publishes a GitHub Release.
 
