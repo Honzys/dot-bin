@@ -7,12 +7,12 @@
   "output_binaries": ["codex"],
   "architectures": {
     "x86_64": {
-      "asset_pattern": "codex-x86_64-unknown-linux-gnu.tar.gz",
-      "extract_path": "codex-x86_64-unknown-linux-gnu"
+      "asset_pattern": "codex-x86_64-unknown-linux-musl.tar.gz",
+      "extract_path": "codex-x86_64-unknown-linux-musl"
     },
     "arm64": {
-      "asset_pattern": "codex-aarch64-unknown-linux-gnu.tar.gz",
-      "extract_path": "codex-aarch64-unknown-linux-gnu"
+      "asset_pattern": "codex-aarch64-unknown-linux-musl.tar.gz",
+      "extract_path": "codex-aarch64-unknown-linux-musl"
     }
   }
 }
