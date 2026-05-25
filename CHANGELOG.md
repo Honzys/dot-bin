@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.6.0] - 2026-05-25
+
+### Added
+
+- speedtest (librespeed/speedtest-cli) — network speed test CLI
+
+### Fixed
+
+- codex: updated asset patterns from `gnu` to `musl` (upstream change)
+- pnpm: changed format from `binary` to `tarball` (upstream now ships `.tar.gz`)
+
+### Changed
+
+- Removed daily cron schedule from update workflow, now manual dispatch only
+
 ## [0.5.0] - 2026-04-10
 
 ### Added
