@@ -29,7 +29,7 @@ Override the channel at runtime with the `CHANNEL` environment variable:
 
 ```bash
 CHANNEL=unstable ./scripts/update.sh nvim   # get pre-release nvim
-CHANNEL=stable ./scripts/update.sh codex    # get stable codex even though JSON says unstable
+CHANNEL=stable ./scripts/update.sh nvim     # force stable even if JSON says unstable
 ```
 
 ## Packages
@@ -50,10 +50,8 @@ CHANNEL=stable ./scripts/update.sh codex    # get stable codex even though JSON 
 | bw | bitwarden/clients | Bitwarden CLI |
 | tmux | tmux/tmux-builds | Terminal multiplexer |
 | pnpm | pnpm/pnpm | Node package manager |
-| codex | openai/codex | OpenAI Codex CLI |
 | kubectl | kubernetes/kubectl | Kubernetes CLI |
 | glow | charmbracelet/glow | Terminal markdown renderer |
-| rtk | rtk-ai/rtk | AI coding agent CLI |
 | git-lfs | git-lfs/git-lfs | Git Large File Storage |
 | chezmoi | twpayne/chezmoi | Dotfile manager |
 | trippy | fujiapple852/trippy | Network diagnostic TUI (traceroute + ping) |

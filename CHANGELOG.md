@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-09-28
+
+### Updated
+
+- bw: 2026.2.0 → 2026.9.0
+- gh: 2.88.1 → 2.101.0
+- glab: 1.89.0 → 1.119.0
+- glow: 2.1.1 → 3.0.0
+- jq: 1.8.1 → 1.8.2
+- k9s: 0.50.18 → 0.51.0
+- kubectl: 1.35.2 → 1.37.1
+- lazygit: 0.60.0 → 0.65.1
+- nvim: 0.11.6 → 0.12.5
+- pnpm: 10.32.1 → 12.8.1
+- sesh: 2.24.2 → 2.31.0
+- speedtest: 1.0.13 → 1.0.14
+- tmux: 3.6a → 3.7c
+- uv: 0.10.10 → 0.12.19
+- zellij: 0.43.1 → 0.45.1
+- zoxide: 0.9.9 → 0.10.0
+
+### Removed
+
+- codex (openai/codex) — agent harness, no longer distributed
+- rtk (rtk-ai/rtk) — no longer distributed
+
+### Fixed
+
+- versions.json now tracks chezmoi 2.72.2, fd 10.5.0, fzf 0.74.4, git-lfs 3.8.0, ripgrep 15.2.0, trippy 0.13.0, xh 0.26.2
+
 ## [0.6.0] - 2026-05-25
 
 ### Added
