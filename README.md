@@ -60,6 +60,7 @@ CHANNEL=stable ./scripts/update.sh nvim     # force stable even if JSON says uns
 | ripgrep | BurntSushi/ripgrep | Fast grep (binary: `rg`) |
 | fzf | junegunn/fzf | Fuzzy finder |
 | speedtest | librespeed/speedtest-cli | Network speed test CLI |
+| herdr | herdrdev/herdr | Terminal multiplexer for coding agents |
 
 ## Local Development
 
