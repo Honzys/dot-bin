@@ -1,0 +1,15 @@
+{
+  "name": "herdr",
+  "repo": "herdrdev/herdr",
+  "tag_prefix": "v",
+  "format": "binary",
+  "output_binaries": ["herdr"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "herdr-linux-x86_64"
+    },
+    "arm64": {
+      "asset_pattern": "herdr-linux-aarch64"
+    }
+  }
+}
