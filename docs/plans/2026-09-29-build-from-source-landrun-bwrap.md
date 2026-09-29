@@ -28,7 +28,7 @@ No usable prebuilt exists:
    - Builds inside Docker only (runners and dev box both have Docker; nothing else assumed —
      no Go/meson/cross toolchains on the host).
    - Output is a **fully static** ELF for the requested arch (no `GLIBC_` symbol versions,
-     no `ld-linux` interpreter).
+     no PT_INTERP / dynamic section).
    - Both arches built from an x86_64 host **without QEMU/binfmt** (the dev box has no binfmt
      and we don't modify host kernel config). Cross-compile instead.
    - Source fetched from the official upstream at the exact tag (`v<version>`).
@@ -56,7 +56,7 @@ No usable prebuilt exists:
 ## Acceptance
 
 - `DOT_BIN_DIR=<tmp> ./scripts/update.sh landrun bubblewrap` → 2 updated, 0 failed.
-- All four binaries: ELF, correct machine (x86-64 / aarch64), static (no GLIBC_, no ld-linux).
+- All four binaries: ELF, correct machine (x86-64 / aarch64), static: no PT_INTERP segment and no dynamic section (`readelf -ld`). Static glibc embeds `ld-linux`/`GLIBC_` strings, so string greps are not a valid check.
 - `./scripts/update.sh jq` still works (regression check of the download path).
 - shellcheck clean on changed scripts.
 - On gauss (x86_64, 22.04): `landrun --best-effort` allows granted / denies ungranted paths;
