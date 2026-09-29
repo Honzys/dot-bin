@@ -6,9 +6,9 @@
 # Usage: bubblewrap.sh <version> <x86_64|arm64> <out_dir>
 set -euo pipefail
 
-if [ "$#" -ne 3 ]; then
-  echo "usage: $0 <version> <x86_64|arm64> <out_dir>" >&2
-  exit 1
+if [[ "$#" -ne 3 ]]; then
+    echo "usage: $0 <version> <x86_64|arm64> <out_dir>" >&2
+    exit 1
 fi
 
 version="$1"
@@ -16,11 +16,8 @@ arch="$2"
 out_dir="$3"
 
 case "$arch" in
-x86_64 | arm64) ;;
-*)
-  echo "unsupported arch: $arch (expected x86_64 or arm64)" >&2
-  exit 1
-  ;;
+    x86_64 | arm64) ;;
+    *) echo "ERROR: unsupported architecture '${arch}'" >&2; exit 1 ;;
 esac
 
 image="debian:bookworm"
