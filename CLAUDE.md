@@ -228,9 +228,12 @@ update.sh [pkg...]
     compare with versions.json
     if newer:
       for each arch (x86_64, arm64):
-        download_asset()      -- download release asset to tmpdir
-        verify_checksum()     -- validate if checksum configured
-        install_binary()      -- extract/copy to bin/{arch}/
+        if format == "build":
+          build_arch()         -- run build_script, output to bin/{arch}/
+        else:
+          download_asset()      -- download release asset to tmpdir
+          verify_checksum()     -- validate if checksum configured
+          install_binary()      -- extract/copy to bin/{arch}/
       set_version()           -- update versions.json
 ```
 
@@ -253,7 +256,7 @@ Two GitHub Actions workflows handle the update-and-release pipeline:
 6. Publishes a GitHub Release tagged `v{version}` with tarballs, checksums, and versions.json
 
 **`ci.yml`** -- PR validation:
-1. Detects changed package JSON files in the PR
+1. Detects changed package JSON files in the PR (a changed `scripts/build/<name>.sh` also counts as that package changing)
 2. Downloads and installs changed packages (or all if no package changes)
 3. Verifies all binaries are valid ELF 64-bit executables
 4. Validates `versions.json` is valid JSON

@@ -205,7 +205,8 @@ Write `packages/<name>.json`. Use the appropriate template based on what you dis
 | `gitlab_project` | string | no | URL-encoded GitLab project path (required when source is gitlab) |
 | `tag_prefix` | string | no | Stripped from tag to get version (default: `""`) |
 | `pre_release` | bool | no | Include pre-release tags (default: false) |
-| `format` | string | yes | `"tarball"`, `"zip"`, or `"binary"` |
+| `format` | string | yes | `"tarball"`, `"zip"`, `"binary"`, or `"build"` (see "Build from source" below) |
+| `build_script` | string | yes for `"build"` | Path to the build script, e.g. `"scripts/build/<name>.sh"` |
 | `output_binaries` | string[] | yes | Binary names placed in `bin/{arch}/` |
 | `checksum.asset` | string | no | Checksum filename (`{version}` placeholder supported) |
 | `checksum.algorithm` | string | no | `"sha256"` or `"sha512"` |
