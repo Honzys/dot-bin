@@ -58,6 +58,10 @@ cat >"${tmpdir}/build-in-container.sh" <<'EOF'
 set -euo pipefail
 arch="$1"
 
+# Fix ownership of everything under the bind mount even on failure, so the
+# host-side trap can always remove its tmpdir.
+trap 'chown -R "$(stat -c %u:%g /work)" /work' EXIT
+
 apt-get update -qq
 apt-get install -y -qq --no-install-recommends meson ninja-build pkg-config gcc
 
@@ -78,14 +82,10 @@ esac
 src_dir="$(find /work -mindepth 1 -maxdepth 1 -type d -name 'bubblewrap-*')"
 cd "$src_dir"
 meson setup /work/build "${meson_args[@]}" \
-  --prefer-static -Dc_link_args=-static \
+  --buildtype=release --prefer-static -Dc_link_args=-static \
   -Dselinux=disabled -Dman=disabled \
   -Dbash_completion=disabled -Dzsh_completion=disabled -Dtests=false
 ninja -C /work/build bwrap
-
-# Files created by root in the bind mount must not end up root-owned on the
-# host; the mount point itself is already owned by the invoking user.
-chown -R "$(stat -c '%u:%g' /work)" /work
 EOF
 chmod +x "${tmpdir}/build-in-container.sh"
 
