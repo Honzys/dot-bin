@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y jq unzip
@@ -41,12 +43,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOT_BIN_DIR: ${{ runner.temp }}/bin
         run: |
+          # Start from empty versions so already-recorded packages are still downloaded/built.
+          echo '{}' > versions.json
           changed="${{ steps.changed.outputs.packages }}"
           if [[ -n "$changed" ]]; then
             ./scripts/update.sh $changed
           else
             ./scripts/update.sh
           fi
+          git checkout versions.json
 
       - name: Verify binaries
         env:
