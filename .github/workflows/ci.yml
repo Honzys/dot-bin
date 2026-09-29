@@ -21,9 +21,11 @@ jobs:
         id: changed
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            changed=$(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }}...HEAD -- 'packages/*.json' \
-              | xargs -I{} basename {} .json \
-              | tr '\n' ' ')
+            changed=$( { git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }}...HEAD -- 'packages/*.json' \
+                | xargs -I{} basename {} .json
+              git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }}...HEAD -- 'scripts/build/*.sh' \
+                | xargs -I{} basename {} .sh
+            } | sort -u | tr '\n' ' ')
           fi
 
           if [[ -z "${changed:-}" ]]; then

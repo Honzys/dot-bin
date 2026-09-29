@@ -44,11 +44,12 @@ Each package is defined in `packages/<name>.json`. Fields:
 | `gitlab_project` | string | no | URL-encoded GitLab project path (required when `source` is `"gitlab"`) |
 | `tag_prefix` | string | no | Prefix stripped from git tag to get version (e.g. `"v"`, `"cli-v"`, `"jq-"`, `""`) |
 | `channel` | string | no | `"stable"` (default) or `"unstable"` -- stable uses latest non-pre-release; unstable includes pre-releases |
-| `format` | string | yes | `"tarball"`, `"zip"`, or `"binary"` |
+| `format` | string | yes | `"tarball"`, `"zip"`, `"binary"`, or `"build"` (build from source, see below) |
+| `build_script` | string | yes for `"build"` | Path to the build script, e.g. `"scripts/build/<name>.sh"` |
 | `output_binaries` | string[] | yes | Binary names placed in `bin/{arch}/` |
 | `checksum.asset` | string | no | Checksum filename in the release (supports `{version}` placeholder) |
 | `checksum.algorithm` | string | no | `"sha256"` or `"sha512"` |
-| `architectures` | object | yes | Per-arch download and extract config (keys: `x86_64`, `arm64`) |
+| `architectures` | object | yes | Per-arch download and extract config (keys: `x86_64`, `arm64`); for `"build"`, entries may be `{}` |
 | `architectures.{arch}.asset_pattern` | string | yes | Download filename (supports `{version}` placeholder) |
 | `architectures.{arch}.extract_path` | string or string[] | no | Path inside archive; use array for multi-binary packages; supports wildcards (e.g. `*/bin/gh`) |
 | `architectures.{arch}.checksum_asset` | string | no | Per-arch checksum file, overrides `checksum.asset` (for per-asset checksums) |
@@ -144,6 +145,27 @@ Kubernetes source (`kubectl`):
 }
 ```
 
+Build from source, no usable prebuilt (`landrun`):
+```json
+{
+  "name": "landrun",
+  "repo": "Zouuup/landrun",
+  "tag_prefix": "v",
+  "format": "build",
+  "build_script": "scripts/build/landrun.sh",
+  "output_binaries": ["landrun"],
+  "architectures": {
+    "x86_64": {},
+    "arm64": {}
+  }
+}
+```
+For `"format": "build"`, `download_and_install` skips download/checksum/extract and instead
+runs `<build_script> <version> <x86_64|arm64> <out_dir>`, which must build a fully static
+binary for that arch inside Docker (no QEMU — cross-compile) and place every entry of
+`output_binaries` in `<out_dir>`, executable. See `scripts/build/landrun.sh` for a worked
+example.
+
 ## Adding a New Package
 
 1. Find the repo and examine its latest release assets
@@ -172,7 +194,10 @@ Kubernetes source (`kubectl`):
 - `resolve_path(base_dir, pattern)` -- resolves extract paths including wildcard/glob patterns
 - `install_binary(pkg_file, tmpdir, asset_name, arch)` -- extracts (tar/zip) or copies (binary) to `bin/{arch}/`
 - `install_extracted(pkg_file, tmpdir, arch)` -- handles single and array extract_path, supports wildcards
-- `download_and_install(pkg_file, tag)` -- orchestrates the full per-arch loop: download, verify, install, update version
+- `download_and_install(pkg_file, tag)` -- orchestrates the full per-arch loop: download, verify, install, update version (for `format: "build"`, delegates to `build_arch` instead of download/verify/install)
+- `build_arch(pkg_file, tag, arch)` -- resolves the version and runs the package's `build_script` for one arch, output going to `bin/{arch}/`
+
+**`scripts/build/<name>.sh`** -- per-package build-from-source scripts (only for `format: "build"` packages). Each takes `<version> <x86_64|arm64> <out_dir>`, builds a fully static binary inside Docker (no QEMU — cross-compile), and places `output_binaries` in `<out_dir>`.
 
 **`scripts/update.sh`** -- main driver:
 - Accepts optional package names as arguments (defaults to all)

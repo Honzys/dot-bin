@@ -247,6 +247,33 @@ If the download fails, common issues:
 - **Checksum mismatch**: Verify the checksum asset name matches what the release publishes; check if it is per-asset vs combined
 - **No arm64 asset**: Some tools only publish x86_64; remove the arm64 entry from architectures
 
+### Build from source (no usable prebuilt)
+
+If upstream ships no Linux binary release, or the only prebuilt is cgo-linked against a
+newer glibc than the target hosts have, use `"format": "build"` instead:
+
+```json
+{
+  "name": "<name>",
+  "repo": "<owner/repo>",
+  "tag_prefix": "v",
+  "format": "build",
+  "build_script": "scripts/build/<name>.sh",
+  "output_binaries": ["<name>"],
+  "architectures": {
+    "x86_64": {},
+    "arm64": {}
+  }
+}
+```
+
+`architectures.{arch}` stay as objects (`{}` is fine) so the per-arch loop and skip logic
+are unchanged. Write `scripts/build/<name>.sh <version> <x86_64|arm64> <out_dir>`: build
+inside Docker only (no QEMU -- cross-compile), produce a fully static Linux binary for the
+requested arch, place every `output_binaries` entry in `<out_dir>` executable, and clean up
+temp dirs with `trap`. See `scripts/build/landrun.sh` for a worked example (`CGO_ENABLED=0`
+Go cross-compile).
+
 ### Step 5: Commit
 
 ```bash
