@@ -1,0 +1,12 @@
+{
+  "name": "bubblewrap",
+  "repo": "containers/bubblewrap",
+  "tag_prefix": "v",
+  "format": "build",
+  "build_script": "scripts/build/bubblewrap.sh",
+  "output_binaries": ["bwrap"],
+  "architectures": {
+    "x86_64": {},
+    "arm64": {}
+  }
+}
