@@ -1,0 +1,12 @@
+{
+  "name": "landrun",
+  "repo": "Zouuup/landrun",
+  "tag_prefix": "v",
+  "format": "build",
+  "build_script": "scripts/build/landrun.sh",
+  "output_binaries": ["landrun"],
+  "architectures": {
+    "x86_64": {},
+    "arm64": {}
+  }
+}

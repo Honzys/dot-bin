@@ -336,12 +336,29 @@ install_extracted() {
     fi
 }
 
+# Runs a package's build_script for one arch, placing output_binaries in BIN_DIR/<arch>/.
+build_arch() {
+    local pkg_file="$1"
+    local tag="$2"
+    local arch="$3"
+
+    local tag_prefix version build_script out_dir
+    tag_prefix=$(jq -r '.tag_prefix // ""' "$pkg_file")
+    version=$(strip_prefix "$tag" "$tag_prefix")
+    build_script=$(jq -r '.build_script' "$pkg_file")
+    out_dir="${BIN_DIR}/${arch}"
+    mkdir -p "$out_dir"
+
+    "${REPO_ROOT}/${build_script}" "$version" "$arch" "$out_dir"
+}
+
 download_and_install() {
     local pkg_file="$1"
     local tag="$2"
 
-    local name arch_success
+    local name format arch_success
     name=$(jq -r '.name' "$pkg_file")
+    format=$(jq -r '.format' "$pkg_file")
     arch_success=0
 
     for arch in "${ARCHITECTURES[@]}"; do
@@ -349,6 +366,16 @@ download_and_install() {
         arch_def=$(jq -r --arg arch "$arch" '.architectures[$arch] // "null"' "$pkg_file")
         if [[ "$arch_def" == "null" ]]; then
             echo "    [${arch}] skipped (no definition)"
+            continue
+        fi
+
+        if [[ "$format" == "build" ]]; then
+            if build_arch "$pkg_file" "$tag" "$arch"; then
+                echo "    [${arch}] installed"
+                arch_success=$((arch_success + 1))
+            else
+                echo "    [${arch}] ERROR: build failed" >&2
+            fi
             continue
         fi
 

@@ -205,7 +205,8 @@ Write `packages/<name>.json`. Use the appropriate template based on what you dis
 | `gitlab_project` | string | no | URL-encoded GitLab project path (required when source is gitlab) |
 | `tag_prefix` | string | no | Stripped from tag to get version (default: `""`) |
 | `pre_release` | bool | no | Include pre-release tags (default: false) |
-| `format` | string | yes | `"tarball"`, `"zip"`, or `"binary"` |
+| `format` | string | yes | `"tarball"`, `"zip"`, `"binary"`, or `"build"` (see "Build from source" below) |
+| `build_script` | string | yes for `"build"` | Path to the build script, e.g. `"scripts/build/<name>.sh"` |
 | `output_binaries` | string[] | yes | Binary names placed in `bin/{arch}/` |
 | `checksum.asset` | string | no | Checksum filename (`{version}` placeholder supported) |
 | `checksum.algorithm` | string | no | `"sha256"` or `"sha512"` |
@@ -246,6 +247,33 @@ If the download fails, common issues:
 - **Wrong extract_path**: Re-list archive contents with `tar tzf` or `unzip -l`
 - **Checksum mismatch**: Verify the checksum asset name matches what the release publishes; check if it is per-asset vs combined
 - **No arm64 asset**: Some tools only publish x86_64; remove the arm64 entry from architectures
+
+### Build from source (no usable prebuilt)
+
+If upstream ships no Linux binary release, or the only prebuilt is cgo-linked against a
+newer glibc than the target hosts have, use `"format": "build"` instead:
+
+```json
+{
+  "name": "<name>",
+  "repo": "<owner/repo>",
+  "tag_prefix": "v",
+  "format": "build",
+  "build_script": "scripts/build/<name>.sh",
+  "output_binaries": ["<name>"],
+  "architectures": {
+    "x86_64": {},
+    "arm64": {}
+  }
+}
+```
+
+`architectures.{arch}` stay as objects (`{}` is fine) so the per-arch loop and skip logic
+are unchanged. Write `scripts/build/<name>.sh <version> <x86_64|arm64> <out_dir>`: build
+inside Docker only (no QEMU -- cross-compile), produce a fully static Linux binary for the
+requested arch, place every `output_binaries` entry in `<out_dir>` executable, and clean up
+temp dirs with `trap`. See `scripts/build/landrun.sh` for a worked example (`CGO_ENABLED=0`
+Go cross-compile).
 
 ### Step 5: Commit
 

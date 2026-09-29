@@ -61,6 +61,8 @@ CHANNEL=stable ./scripts/update.sh nvim     # force stable even if JSON says uns
 | fzf | junegunn/fzf | Fuzzy finder |
 | speedtest | librespeed/speedtest-cli | Network speed test CLI |
 | herdr | herdrdev/herdr | Terminal multiplexer for coding agents |
+| landrun | Zouuup/landrun | Landlock sandbox runner |
+| bubblewrap | containers/bubblewrap | Unprivileged sandboxing tool (binary: `bwrap`) |
 
 ## Local Development
 

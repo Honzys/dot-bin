@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.9.0] - 2026-09-29
+
+### Added
+
+- landrun (Zouuup/landrun) — Landlock sandbox runner, built from source (static, `CGO_ENABLED=0`)
+- bubblewrap (containers/bubblewrap) — unprivileged sandboxing tool (`bwrap`), built from source (static)
+
+### Changed
+
+- New `"format": "build"` package type: runs `scripts/build/<name>.sh` in Docker to produce static binaries when upstream ships none usable on glibc 2.35 hosts
+
 ## [0.8.0] - 2026-09-28
 
 ### Added
