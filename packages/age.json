@@ -1,0 +1,17 @@
+{
+  "name": "age",
+  "repo": "FiloSottile/age",
+  "tag_prefix": "v",
+  "format": "tarball",
+  "output_binaries": ["age", "age-keygen"],
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "age-v{version}-linux-amd64.tar.gz",
+      "extract_path": ["age/age", "age/age-keygen"]
+    },
+    "arm64": {
+      "asset_pattern": "age-v{version}-linux-arm64.tar.gz",
+      "extract_path": ["age/age", "age/age-keygen"]
+    }
+  }
+}
