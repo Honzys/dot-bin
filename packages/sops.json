@@ -1,0 +1,19 @@
+{
+  "name": "sops",
+  "repo": "getsops/sops",
+  "tag_prefix": "v",
+  "format": "binary",
+  "output_binaries": ["sops"],
+  "checksum": {
+    "asset": "sops-v{version}.checksums.txt",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "sops-v{version}.linux.amd64"
+    },
+    "arm64": {
+      "asset_pattern": "sops-v{version}.linux.arm64"
+    }
+  }
+}

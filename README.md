@@ -64,6 +64,8 @@ CHANNEL=stable ./scripts/update.sh nvim     # force stable even if JSON says uns
 | landrun | Zouuup/landrun | Landlock sandbox runner |
 | bubblewrap | containers/bubblewrap | Unprivileged sandboxing tool (binary: `bwrap`) |
 | vault | releases.hashicorp.com | HashiCorp Vault CLI |
+| sops | getsops/sops | Encrypted secrets file editor |
+| age | FiloSottile/age | File encryption (binaries: `age`, `age-keygen`) |
 
 ## Local Development
 
