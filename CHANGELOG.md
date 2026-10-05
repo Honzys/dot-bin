@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.12.0] - 2026-10-05
+
+### Changed
+
+- age: SHA256 verified against the GitHub release API asset `digest`; the install
+  fails if the digest is missing or wrong
+- New package option `checksum.github_digest` for releases without a checksum file
+
 ## [0.11.0] - 2026-10-05
 
 ### Added

@@ -4,6 +4,10 @@
   "tag_prefix": "v",
   "format": "tarball",
   "output_binaries": ["age", "age-keygen"],
+  "checksum": {
+    "algorithm": "sha256",
+    "github_digest": true
+  },
   "architectures": {
     "x86_64": {
       "asset_pattern": "age-v{version}-linux-amd64.tar.gz",
