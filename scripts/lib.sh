@@ -143,6 +143,23 @@ download_checksum_file() {
     tag_prefix=$(jq -r '.tag_prefix // ""' "$pkg_file")
     version=$(strip_prefix "$tag" "$tag_prefix")
 
+    # GitHub release API digest ("sha256:<hash>") written as a one-line checksum file
+    if [[ "$(jq -r '.checksum.github_digest // false' "$pkg_file")" == "true" ]]; then
+        local repo asset_pattern asset_name digest
+        repo=$(jq -r '.repo' "$pkg_file")
+        asset_pattern=$(jq -r --arg arch "$arch" '.architectures[$arch].asset_pattern' "$pkg_file")
+        asset_name="${asset_pattern//\{version\}/$version}"
+        digest=$(gh api "repos/${repo}/releases/tags/${tag}" \
+            --jq ".assets[] | select(.name == \"${asset_name}\") | .digest")
+        if [[ ! "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+            echo "ERROR: No sha256 digest for '${asset_name}' in release ${tag}" >&2
+            return 1
+        fi
+        echo "${digest#sha256:}  ${asset_name}" > "${dest_dir}/${asset_name}.sha256"
+        echo "${dest_dir}/${asset_name}.sha256"
+        return 0
+    fi
+
     # Check for arch-specific checksum asset, fall back to top-level
     checksum_asset=$(jq -r --arg arch "$arch" \
         '.architectures[$arch].checksum_asset // .checksum.asset' "$pkg_file")

@@ -49,6 +49,7 @@ Each package is defined in `packages/<name>.json`. Fields:
 | `output_binaries` | string[] | yes | Binary names placed in `bin/{arch}/` |
 | `checksum.asset` | string | no | Checksum filename in the release (supports `{version}` placeholder) |
 | `checksum.algorithm` | string | no | `"sha256"` or `"sha512"` |
+| `checksum.github_digest` | bool | no | `true`: verify against the GitHub release API asset `digest` (`sha256:...`); fails if missing. For releases without a checksum file |
 | `architectures` | object | yes | Per-arch download and extract config (keys: `x86_64`, `arm64`); for `"build"`, entries may be `{}` |
 | `architectures.{arch}.asset_pattern` | string | yes | Download filename (supports `{version}` placeholder) |
 | `architectures.{arch}.extract_path` | string or string[] | no | Path inside archive; use array for multi-binary packages; supports wildcards (e.g. `*/bin/gh`) |
