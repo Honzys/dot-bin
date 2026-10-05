@@ -52,6 +52,11 @@ get_latest_tag() {
         fi
     elif [[ "$source" == "kubernetes" ]]; then
         tag=$(curl -sSL "https://dl.k8s.io/release/stable.txt")
+    elif [[ "$source" == "hashicorp" ]]; then
+        local name
+        name=$(jq -r '.name' "$pkg_file")
+        tag=$(curl -fsSL --max-time 30 "https://checkpoint-api.hashicorp.com/v1/check/${name}" \
+            | jq -r '.current_version')
     elif [[ "$channel" == "unstable" ]]; then
         repo=$(jq -r '.repo' "$pkg_file")
         tag=$(gh api "repos/${repo}/releases" --jq \
@@ -112,6 +117,11 @@ download_asset() {
         esac
         download_url="https://dl.k8s.io/release/${tag}/bin/linux/${k8s_arch}/${asset_name}"
         curl -sSL -o "${dest_dir}/${asset_name}" "$download_url"
+    elif [[ "$source" == "hashicorp" ]]; then
+        local name
+        name=$(jq -r '.name' "$pkg_file")
+        curl -fsSL --max-time 300 -o "${dest_dir}/${asset_name}" \
+            "https://releases.hashicorp.com/${name}/${version}/${asset_name}"
     else
         repo=$(jq -r '.repo' "$pkg_file")
         gh release download "$tag" --repo "$repo" --pattern "$asset_name" --dir "$dest_dir"
@@ -160,6 +170,14 @@ download_checksum_file() {
         esac
         download_url="https://dl.k8s.io/release/${tag}/bin/linux/${k8s_arch}/${checksum_name}"
         if ! curl -sSL -o "${dest_dir}/${checksum_name}" "$download_url"; then
+            echo "ERROR: Failed to download checksum file '${checksum_name}'" >&2
+            return 1
+        fi
+    elif [[ "$source" == "hashicorp" ]]; then
+        local name
+        name=$(jq -r '.name' "$pkg_file")
+        if ! curl -fsSL --max-time 30 -o "${dest_dir}/${checksum_name}" \
+            "https://releases.hashicorp.com/${name}/${version}/${checksum_name}"; then
             echo "ERROR: Failed to download checksum file '${checksum_name}'" >&2
             return 1
         fi

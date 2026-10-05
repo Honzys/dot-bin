@@ -39,8 +39,8 @@ Each package is defined in `packages/<name>.json`. Fields:
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `name` | string | yes | Package identifier, must match filename |
-| `repo` | string | yes* | GitHub `owner/repo` (*omit for GitLab/Kubernetes sources) |
-| `source` | string | no | `"github"` (default), `"gitlab"`, or `"kubernetes"` |
+| `repo` | string | yes* | GitHub `owner/repo` (*omit for GitLab/Kubernetes/HashiCorp sources) |
+| `source` | string | no | `"github"` (default), `"gitlab"`, `"kubernetes"`, or `"hashicorp"` (product = `name`) |
 | `gitlab_project` | string | no | URL-encoded GitLab project path (required when `source` is `"gitlab"`) |
 | `tag_prefix` | string | no | Prefix stripped from git tag to get version (e.g. `"v"`, `"cli-v"`, `"jq-"`, `""`) |
 | `channel` | string | no | `"stable"` (default) or `"unstable"` -- stable uses latest non-pre-release; unstable includes pre-releases |
@@ -145,6 +145,22 @@ Kubernetes source (`kubectl`):
 }
 ```
 
+HashiCorp source (`vault`) -- `name` is the product on releases.hashicorp.com:
+```json
+{
+  "name": "vault",
+  "source": "hashicorp",
+  "tag_prefix": "",
+  "format": "zip",
+  "output_binaries": ["vault"],
+  "checksum": { "asset": "vault_{version}_SHA256SUMS", "algorithm": "sha256" },
+  "architectures": {
+    "x86_64": { "asset_pattern": "vault_{version}_linux_amd64.zip", "extract_path": "vault" },
+    "arm64": { "asset_pattern": "vault_{version}_linux_arm64.zip", "extract_path": "vault" }
+  }
+}
+```
+
 Build from source, no usable prebuilt (`landrun`):
 ```json
 {
@@ -187,9 +203,9 @@ example.
 - `get_current_version(name)` -- reads version from `versions.json`
 - `set_version(name, version)` -- writes version to `versions.json`
 - `strip_prefix(tag, prefix)` -- removes tag prefix to get clean version
-- `get_latest_tag(pkg_file)` -- queries GitHub API (`gh api`), GitLab API, or Kubernetes stable endpoint for latest release tag; respects `channel` setting (`stable`/`unstable`) and `CHANNEL` env var override
-- `download_asset(pkg_file, tag, dest_dir, arch)` -- downloads the per-arch release asset via `gh release download` (GitHub), `curl` (GitLab), or Kubernetes download URL
-- `download_checksum_file(pkg_file, tag, dest_dir, arch)` -- downloads checksum file, respects arch-specific overrides
+- `get_latest_tag(pkg_file)` -- queries GitHub API (`gh api`), GitLab API, Kubernetes stable endpoint, or HashiCorp checkpoint API (`current_version`) for latest release tag; respects `channel` setting (`stable`/`unstable`) and `CHANNEL` env var override
+- `download_asset(pkg_file, tag, dest_dir, arch)` -- downloads the per-arch release asset via `gh release download` (GitHub), `curl` (GitLab), Kubernetes download URL, or `releases.hashicorp.com/<name>/<version>/` (HashiCorp)
+- `download_checksum_file(pkg_file, tag, dest_dir, arch)` -- downloads checksum file (same per-source URLs), respects arch-specific overrides
 - `verify_checksum(pkg_file, asset_name, asset_path, tag, arch)` -- validates SHA256/512 against downloaded checksum file
 - `resolve_path(base_dir, pattern)` -- resolves extract paths including wildcard/glob patterns
 - `install_binary(pkg_file, tmpdir, asset_name, arch)` -- extracts (tar/zip) or copies (binary) to `bin/{arch}/`

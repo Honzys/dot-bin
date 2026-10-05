@@ -63,6 +63,7 @@ CHANNEL=stable ./scripts/update.sh nvim     # force stable even if JSON says uns
 | herdr | herdrdev/herdr | Terminal multiplexer for coding agents |
 | landrun | Zouuup/landrun | Landlock sandbox runner |
 | bubblewrap | containers/bubblewrap | Unprivileged sandboxing tool (binary: `bwrap`) |
+| vault | releases.hashicorp.com | HashiCorp Vault CLI |
 
 ## Local Development
 
