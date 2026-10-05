@@ -25,5 +25,6 @@
   "xh": "0.26.2",
   "herdr": "0.9.1",
   "landrun": "0.1.17",
-  "bubblewrap": "0.13.0"
+  "bubblewrap": "0.13.0",
+  "vault": "2.1.1"
 }

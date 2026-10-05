@@ -200,8 +200,8 @@ Write `packages/<name>.json`. Use the appropriate template based on what you dis
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `name` | string | yes | Package identifier, must match filename |
-| `repo` | string | yes* | GitHub `owner/repo` (*omit for GitLab) |
-| `source` | string | no | `"github"` (default) or `"gitlab"` |
+| `repo` | string | yes* | GitHub `owner/repo` (*omit for GitLab/Kubernetes/HashiCorp) |
+| `source` | string | no | `"github"` (default), `"gitlab"`, `"kubernetes"`, or `"hashicorp"` (product = `name`, see `vault`) |
 | `gitlab_project` | string | no | URL-encoded GitLab project path (required when source is gitlab) |
 | `tag_prefix` | string | no | Stripped from tag to get version (default: `""`) |
 | `pre_release` | bool | no | Include pre-release tags (default: false) |
@@ -310,6 +310,12 @@ git commit -m "feat: add <name> package"
 ### glab -- GitLab source
 - Uses `"source": "gitlab"` and `"gitlab_project": "gitlab-org%2Fcli"`
 - Downloads from GitLab API instead of GitHub
+- No `repo` field
+
+### vault -- HashiCorp source
+- Uses `"source": "hashicorp"`; `name` is the product on releases.hashicorp.com
+- Version from `checkpoint-api.hashicorp.com/v1/check/vault` (`current_version`), tag_prefix `""`
+- Assets: `vault_{version}_linux_amd64.zip`, checksum `vault_{version}_SHA256SUMS`
 - No `repo` field
 
 ### codex -- pre-release

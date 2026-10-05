@@ -1,0 +1,21 @@
+{
+  "name": "vault",
+  "source": "hashicorp",
+  "tag_prefix": "",
+  "format": "zip",
+  "output_binaries": ["vault"],
+  "checksum": {
+    "asset": "vault_{version}_SHA256SUMS",
+    "algorithm": "sha256"
+  },
+  "architectures": {
+    "x86_64": {
+      "asset_pattern": "vault_{version}_linux_amd64.zip",
+      "extract_path": "vault"
+    },
+    "arm64": {
+      "asset_pattern": "vault_{version}_linux_arm64.zip",
+      "extract_path": "vault"
+    }
+  }
+}
