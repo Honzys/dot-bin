@@ -1,0 +1,12 @@
+{
+  "name": "msb",
+  "repo": "zerocore-ai/microsandbox",
+  "tag_prefix": "v",
+  "format": "build",
+  "build_script": "scripts/build/msb.sh",
+  "output_binaries": ["msb"],
+  "architectures": {
+    "x86_64": {},
+    "arm64": {}
+  }
+}

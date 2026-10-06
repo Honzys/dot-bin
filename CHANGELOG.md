@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.13.0] - 2026-10-06
+
+### Added
+
+- msb (zerocore-ai/microsandbox) — microsandbox CLI, SHA256 verified. Built via
+  `scripts/build/msb.sh` because msb needs the tarball's `libkrunfw.so.<ver>` beside
+  it under that exact name; the library is installed next to `msb` in `bin/{arch}/`
+
 ## [0.12.0] - 2026-10-05
 
 ### Changed
