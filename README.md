@@ -66,6 +66,7 @@ CHANNEL=stable ./scripts/update.sh nvim     # force stable even if JSON says uns
 | vault | releases.hashicorp.com | HashiCorp Vault CLI |
 | sops | getsops/sops | Encrypted secrets file editor |
 | age | FiloSottile/age | File encryption (binaries: `age`, `age-keygen`) |
+| msb | zerocore-ai/microsandbox | microsandbox CLI (ships with `libkrunfw.so.*`, which must stay beside it) |
 
 ## Local Development
 
