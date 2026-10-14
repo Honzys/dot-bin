@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.13.1] - 2026-10-14
+
+### Updated
+
+- herdr: 0.9.1 → 0.9.4
+
 ## [0.13.0] - 2026-10-06
 
 ### Added
