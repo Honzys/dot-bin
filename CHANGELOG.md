@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.14.0] - 2026-10-20
+
+### Added
+
+- mosh (mobile-shell/mosh) — `mosh-server` only, for the Moshi phone client. Built
+  fully static via `scripts/build/mosh.sh` (Alpine/musl in Docker, SHA256 of the
+  release tarball pinned per version); x86_64 only
+
 ## [0.13.2] - 2026-10-15
 
 ### Updated

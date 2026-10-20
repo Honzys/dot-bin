@@ -63,6 +63,7 @@ CHANNEL=stable ./scripts/update.sh nvim     # force stable even if JSON says uns
 | herdr | herdrdev/herdr | Terminal multiplexer for coding agents |
 | landrun | Zouuup/landrun | Landlock sandbox runner |
 | bubblewrap | containers/bubblewrap | Unprivileged sandboxing tool (binary: `bwrap`) |
+| mosh | mobile-shell/mosh | Mobile shell server (binary: `mosh-server`, static build from source) |
 | vault | releases.hashicorp.com | HashiCorp Vault CLI |
 | sops | getsops/sops | Encrypted secrets file editor |
 | age | FiloSottile/age | File encryption (binaries: `age`, `age-keygen`) |
