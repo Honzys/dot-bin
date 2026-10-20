@@ -1,0 +1,11 @@
+{
+  "name": "mosh",
+  "repo": "mobile-shell/mosh",
+  "tag_prefix": "mosh-",
+  "format": "build",
+  "build_script": "scripts/build/mosh.sh",
+  "output_binaries": ["mosh-server"],
+  "architectures": {
+    "x86_64": {}
+  }
+}
