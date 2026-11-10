@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.14.1] - 2026-11-10
+
+### Updated
+
+- bubblewrap: 0.13.0 → 0.13.1
+- bw: 2026.9.0 → 2026.10.1
+- chezmoi: 2.72.2 → 2.74.0
+- fd: 10.5.0 → 10.5.2
+- fzf: 0.74.4 → 0.75.0
+- gh: 2.101.0 → 2.103.3
+- git-lfs: 3.8.0 → 3.8.1
+- glab: 1.119.0 → 1.130.0
+- kubectl: 1.37.1 → 1.37.2
+- lazygit: 0.65.1 → 0.66.3
+- msb: 0.7.7 → 0.7.14
+- nvim: 0.12.5 → 0.12.6
+- pnpm: 12.8.1 → 12.19.0
+- sesh: 2.31.0 → 2.34.0
+- tmux: 3.7c → 3.8
+- uv: 0.12.19 → 0.13.7
+- vault: 2.1.1 → 2.2.1
+- xh: 0.26.2 → 0.26.3
+
 ## [0.14.0] - 2026-10-20
 
 ### Added
